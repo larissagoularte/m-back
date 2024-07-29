@@ -3,7 +3,8 @@ require('dotenv').config();
 const express = require('express');
 const passport = require('passport');
 const session = require('express-session');
-const bodyParser = require('body-parser');
+const MongoStore = require('connect-mongo');
+
 const authRouter = require('./routes/authRoutes');
 const listingsRouter = require('./routes/listingsRoutes');
 
@@ -14,6 +15,7 @@ const connectDB = require('./config/db');
 
 const app = express();
 const port = process.env.PORT || 3000;
+const mongoUrl = process.env.DATABASE;
 
 connectDB();
 
@@ -22,7 +24,8 @@ app.use(express.json());
 app.use(session({
     secret: 'secret',
     resave: true,
-    saveUninitialized: true
+    saveUninitialized: false, 
+    store: MongoStore.create({ mongoUrl: mongoUrl })
 }));
 
 app.use(passport.initialize());
